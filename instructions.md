@@ -5,7 +5,7 @@
 **Asmaan.com is Pakistan's first map-first, AI-enriched, managed property platform**^^. **It is designed to address the lack of transparency, stale listings, and agent fraud prevalent in the local real estate market**^^.
 
 * **Verified Workflow:** Every listing is physically visited by the team, professionally photographed, and approved by an administrator before going live^^^^^^^^.
-* **Map-First Interface:** The primary interface is a satellite map powered by Mapbox GL JS, displaying price-label pins over real aerial imagery of Pakistani cities^^^^^^^^^^^^^^^^^^.
+* **Map-First Interface:** The primary interface is a satellite map powered by Mapbox GL JS, displaying price-label pins over real aerial imagery of Pakistani citiy^^^^^^^^^^^^^^^^^^.
 * **Revenue Model:** The platform operates on a commission-on-success model, earning 1-2% from buyers and sellers only when a deal successfully closes^^^^^^^^.
 * **Target Audience:** Primary users include property buyers, sellers, and students relocating, while secondary users include overseas Pakistani investors and real estate developers^^.
 
