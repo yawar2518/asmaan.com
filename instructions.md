@@ -81,7 +81,7 @@
   * **Feature branches must branch off **`<span class="citation-486">dev</span>` and follow the exact format: `<span class="citation-486">feature/ASM-{id}-name</span>` (e.g., `<span class="citation-486">feature/ASM-13-mapbox-satellite-map</span>`)^^.
 * **Commit Messages:** Every commit must begin with the corresponding JIRA ticket ID followed by a brief description (e.g., `<span class="citation-485">ASM-11: Add Property model with PostGIS PointField</span>`)^^.
 * **React Conventions:** Use functional components exclusively, destructure props in the function signature, and route all API calls through the `<span class="citation-484">src/services/api.js</span>` file rather than fetching directly inside components^^.
-* **Backend Conventions:** Cache all Google Places API responses per property to minimize costs, and use GeoDjango `<span class="citation-483">PointField</span>` for all GPS coordinates instead of separate float fields^^.
+* **Backend Conventions:** Cache all Google Places API responses per property to minimize costs, and use GeoDjango `<span class="citation-483">PointField</span>` for all GPS coordinates instead of separate float fields.
 
 ---
 
