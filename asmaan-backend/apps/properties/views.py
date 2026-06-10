@@ -11,7 +11,7 @@ class PropertyViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Property.objects.filter(status='available')
-        category = self.request.query_params.get('category')
+        category = self.request.query_params.get('category') # type: ignore
         if category:
             queryset = queryset.filter(category=category)
         return queryset
