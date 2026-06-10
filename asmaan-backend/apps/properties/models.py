@@ -40,7 +40,7 @@ class Property(models.Model):
         verbose_name_plural = 'Properties'
 
     def __str__(self):
-        return f'{self.title} ({self.get_category_display()})'
+        return f'{self.title} ({self.get_category_display()})' # type: ignore
 
 
 class PropertyImage(models.Model):

@@ -11,22 +11,21 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 import os
-# GDAL configuration for Windows (PostGIS support)
-GDAL_LIBRARY_PATH = os.path.join(
-    BASE_DIR, 'venv', 'Lib', 'site-packages', 'osgeo', 'gdal.dll'
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# GDAL / PostGIS configuration for Windows
+OSGEO_PATH = os.path.join(
+    BASE_DIR, 'venv', 'Lib', 'site-packages', 'osgeo'
 )
-GEOS_LIBRARY_PATH = os.path.join(
-    BASE_DIR, 'venv', 'Lib', 'site-packages', 'osgeo', 'geos_c.dll'
-)
-os.environ['PATH'] = (
-    os.path.join(BASE_DIR, 'venv', 'Lib', 'site-packages', 'osgeo')
-    + os.pathsep + os.environ['PATH']
-)
+
+GDAL_LIBRARY_PATH = os.path.join(OSGEO_PATH, 'gdal.dll')
+GEOS_LIBRARY_PATH = os.path.join(OSGEO_PATH, 'geos_c.dll')
+
+os.environ['PATH'] = OSGEO_PATH + os.pathsep + os.environ['PATH']
+os.environ['GDAL_DATA'] = os.path.join(OSGEO_PATH, 'data', 'gdal')
+os.environ['PROJ_LIB'] = os.path.join(OSGEO_PATH, 'data', 'proj')
 
 
 # Quick-start development settings - unsuitable for production
