@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    # Local apps
+    'apps.properties',
+    'apps.listings',
 ]
 
 MIDDLEWARE = [
