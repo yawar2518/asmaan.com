@@ -40,27 +40,131 @@
 
 ## 4. Basic Project Setup Guide
 
-**Follow these instructions to get the local development environment running for Sprint 1**^^.
+Follow these instructions to get the local development environment running.
+
+> ⚠️ **Critical:** Python 3.12 is required. Python 3.13 and 3.14 are NOT compatible
+> with GDAL/PostGIS on Windows. Do not skip this.
+
+### Prerequisites — Install these first (in order)
+
+1. **Python 3.12** via winget:
+```powershell
+   winget install Python.Python.3.12
+```
+
+2. **Node.js LTS** via winget:
+```powershell
+   winget install OpenJS.NodeJS.LTS
+```
+
+3. **PostgreSQL 16** via winget:
+```powershell
+   winget install PostgreSQL.PostgreSQL.16
+```
+   Then add to PATH permanently:
+```powershell
+   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\PostgreSQL\16\bin", "User")
+```
+   Close and reopen PowerShell after this.
+
+4. **PostGIS 3.6** — download the installer from:
+   `https://download.osgeo.org/postgis/windows/pg16/`
+   Pick: `postgis-bundle-pg16x64-setup-3.6.x-x.exe`
+   During install:
+   - Username: `postgres` | Password: `postgres` | Port: `5432`
+   - ✅ Tick "Create spatial database" → name it `asmaan_db`
+
+---
 
 ### Backend (Django) Setup
 
-1. **Clone the GitHub repository to your local machine**^^.
-2. **Navigate to the **`<span class="citation-505">asmaan-backend</span>` directory^^.
-3. Create and activate a Python virtual environment.
-4. **Install the required dependencies using the provided file: **`<span class="citation-504">pip install -r requirements.txt</span>`^^^^^^.
-5. **Duplicate the **`<span class="citation-503">.env.example</span>` file, rename it to `<span class="citation-503">.env</span>`, and populate it with your local PostgreSQL credentials and secret keys^^^^^^.
-6. **Ensure your local PostgreSQL 16 database has the PostGIS extension enabled**^^^^^^^^.
-7. **Run **`<span class="citation-501">python manage.py makemigrations</span>` and `<span class="citation-501">python manage.py migrate</span>` to generate the database tables^^.
-8. Start the development server using `python manage.py runserver`.
+1. Clone the repo and switch to `dev`:
+```powershell
+   git clone https://github.com/yawar2518/asmaan.com.git
+   cd asmaan.com
+   git checkout dev
+```
+
+2. Navigate to the backend and create a Python 3.12 virtual environment:
+```powershell
+   cd asmaan-backend
+   py -3.12 -m venv venv
+   venv\Scripts\activate
+```
+
+3. **Install GDAL wheel manually first** (cannot be installed via pip on Windows):
+   Download this file into `asmaan-backend/`:
+   `https://github.com/cgohlke/geospatial-wheels/releases/download/v2024.2.18/GDAL-3.8.4-cp312-cp312-win_amd64.whl`
+   Then install it:
+```powershell
+   pip install GDAL-3.8.4-cp312-cp312-win_amd64.whl
+```
+
+4. Install all remaining dependencies:
+```powershell
+   pip install -r requirements.txt
+```
+
+5. Create your `.env` file by copying `.env.example`:
+```powershell
+   copy .env.example .env
+```
+   Open `.env` and fill in:
+```ini
+   SECRET_KEY=django-insecure-change-this-later
+   DEBUG=True
+   ALLOWED_HOSTS=localhost,127.0.0.1
+   DB_NAME=asmaan_db
+   DB_USER=postgres
+   DB_PASSWORD=postgres
+   DB_HOST=localhost
+   DB_PORT=5432
+```
+
+6. Run migrations:
+```powershell
+   python manage.py migrate
+```
+
+7. Create your admin account:
+```powershell
+   python manage.py createsuperuser
+```
+
+8. Start the backend:
+```powershell
+   python manage.py runserver
+```
+   Admin panel: `http://127.0.0.1:8000/admin/`
+
+---
 
 ### Frontend (React) Setup
 
-1. **Navigate to the **`<span class="citation-500">asmaan-frontend</span>` directory^^.
-2. **Install the Node modules by running **`<span class="citation-499">npm install</span>`^^.
-3. **Create a **`<span class="citation-498">.env</span>` file in the frontend root and add your Mapbox token: `<span class="citation-498">REACT_APP_MAPBOX_TOKEN=your-token</span>`^^.
-4. Start the React development server by running `npm start`.
+Open a **second terminal** — keep the backend running in the first.
 
----
+1. Navigate to the frontend:
+```powershell
+   cd asmaan-frontend
+```
+
+2. Install Node packages:
+```powershell
+   npm install
+```
+
+3. Create a `.env` file in `asmaan-frontend/`:
+```ini
+   VITE_MAPBOX_TOKEN=your_mapbox_token_here
+```
+   Get a free token from `https://mapbox.com` → Account → Tokens.
+   Each developer should create their own free account (50K map loads/month free).
+
+4. Start the frontend:
+```powershell
+   npm run dev
+```
+   Open: `http://localhost:5173/buy`
 
 ## 5. AI Modules Specification
 
@@ -84,6 +188,54 @@
 * **Backend Conventions:** Cache all Google Places API responses per property to minimize costs, and use GeoDjango `<span class="citation-483">PointField</span>` for all GPS coordinates instead of separate float fields^^.
 
 ---
+
+## 6.5 Git Commands Reference
+
+### Daily workflow
+
+```powershell
+# Always start by pulling latest changes
+git checkout dev
+git pull origin dev
+
+# Check what files you changed
+git status
+
+# Stage your changes
+git add .
+
+# Commit with JIRA ticket ID
+git commit -m "ASM-{id}: Brief description of what this commit does"
+
+# Push to dev
+git push origin dev
+```
+
+### Useful git commands
+
+```powershell
+# See commit history
+git log --oneline
+
+# Undo unstaged changes to a file
+git checkout -- filename.jsx
+
+# See exactly what changed in a file
+git diff filename.jsx
+
+# Pull latest before starting any new task
+git pull origin dev
+```
+
+### Rules — never break these
+
+| Rule | Why |
+|---|---|
+| Never push directly to `main` | `main` is production — only merged PRs go here |
+| Always include JIRA ID in commit message | Links code to ticket; JIRA auto-tracks progress |
+| Never commit `.env` files | Contains real passwords — in `.gitignore` for a reason |
+| Never commit `venv/` or `node_modules/` | Huge folders; each developer installs their own |
+| Always `git pull` before starting work | Avoids merge conflicts with teammates |
 
 ## 7. Master Timeline & Roadmap
 
