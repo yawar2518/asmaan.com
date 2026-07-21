@@ -20,3 +20,8 @@ export const propertyService = {
 }
 
 export default api
+
+export const getPropertyById = async (id) => {
+  const response = await axios.get(`/api/properties/${id}/`)
+  return response.data
+}
