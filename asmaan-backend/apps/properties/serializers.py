@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Property, PropertyImage
+from .models import Property, PropertyImage, PriceHistory
 
 
 class PropertyImageSerializer(serializers.ModelSerializer):
@@ -8,8 +8,15 @@ class PropertyImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image_url', 'is_primary']
 
 
+class PriceHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriceHistory
+        fields = ['price', 'recorded_at']
+
+
 class PropertySerializer(serializers.ModelSerializer):
     images = PropertyImageSerializer(many=True, read_only=True)
+    price_history = PriceHistorySerializer(many=True, read_only=True)
     latitude = serializers.SerializerMethodField()
     longitude = serializers.SerializerMethodField()
 
@@ -20,7 +27,7 @@ class PropertySerializer(serializers.ModelSerializer):
             'size', 'bedrooms', 'bathrooms', 'floors',
             'area', 'city', 'address',
             'latitude', 'longitude',
-            'is_verified', 'description', 'images',
+            'is_verified', 'description', 'images', 'price_history',
             'created_at',
         ]
 

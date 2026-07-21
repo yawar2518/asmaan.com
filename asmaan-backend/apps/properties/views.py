@@ -14,4 +14,13 @@ class PropertyViewSet(viewsets.ReadOnlyModelViewSet):
         category = self.request.query_params.get('category') # type: ignore
         if category:
             queryset = queryset.filter(category=category)
+
+        min_price = self.request.query_params.get('min_price') # type: ignore
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+
+        max_price = self.request.query_params.get('max_price') # type: ignore
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
         return queryset
