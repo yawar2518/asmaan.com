@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import VerifiedBadge from '../common/VerifiedBadge'
 
 export default function PropertyCard({ property }) {
@@ -5,12 +6,15 @@ export default function PropertyCard({ property }) {
   const imageUrl = primaryImage?.image_url || property.images?.[0]?.image_url
 
   return (
-    <div style={{
+    <Link to={`/property/${property.id}`} style={{
+      display: 'block',
       background: 'white',
       borderRadius: '8px',
       overflow: 'hidden',
       boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       cursor: 'pointer',
+      textDecoration: 'none',
+      color: 'inherit',
       transition: 'transform 0.15s, box-shadow 0.15s',
     }}
       onMouseEnter={(e) => {
@@ -53,7 +57,7 @@ export default function PropertyCard({ property }) {
           📍 {property.area}, {property.city}
         </p>
       </div>
-    </div>
+    </Link>
   )
 }
 
