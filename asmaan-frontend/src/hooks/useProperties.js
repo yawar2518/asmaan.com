@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { propertyService } from '../services/api'
 
-export function useProperties(category) {
+export function useProperties(category, filters = {}) {
   const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const { minPrice, maxPrice } = filters
 
   useEffect(() => {
     let cancelled = false
@@ -12,7 +13,7 @@ export function useProperties(category) {
     async function fetchProperties() {
       try {
         setLoading(true)
-        const data = await propertyService.getByCategory(category)
+        const data = await propertyService.getByCategory(category, { minPrice, maxPrice })
         if (!cancelled) {
           setProperties(data)
           setError(null)
@@ -29,7 +30,7 @@ export function useProperties(category) {
 
     fetchProperties()
     return () => { cancelled = true }
-  }, [category])
+  }, [category, minPrice, maxPrice])
 
   return { properties, loading, error }
 }

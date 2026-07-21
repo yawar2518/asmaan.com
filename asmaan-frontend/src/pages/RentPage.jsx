@@ -8,14 +8,20 @@ import { useProperties } from '../hooks/useProperties'
 
 export default function RentPage() {
   const { properties, loading, error } = useProperties('rent')
-  const [view, setView] = useState('grid')
-  const [filters, setFilters] = useState({ bedrooms: 'Any', min_area: '', max_area: '' })
+  const [view, setViewState] = useState(() => sessionStorage.getItem('asmaan_view_rent') || 'grid')
+  const setView = (v) => {
+    setViewState(v)
+    sessionStorage.setItem('asmaan_view_rent', v)
+  }
+  const [filters, setFilters] = useState({ bedrooms: 'Any', min_area: '', max_area: '', min_price: '', max_price: '' })
 
   const filtered = useMemo(() => {
     return properties.filter((p) => {
       if (filters.bedrooms !== 'Any' && String(p.bedrooms) !== filters.bedrooms) return false
       if (filters.min_area && p.area_sqft < Number(filters.min_area)) return false
       if (filters.max_area && p.area_sqft > Number(filters.max_area)) return false
+      if (filters.min_price && Number(p.price) < Number(filters.min_price)) return false
+      if (filters.max_price && Number(p.price) > Number(filters.max_price)) return false
       return true
     })
   }, [properties, filters])

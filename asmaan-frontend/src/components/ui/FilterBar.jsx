@@ -5,10 +5,10 @@ export default function FilterBar({ filters, setFilters }) {
     setFilters((prev) => ({ ...prev, [field]: value }));
 
   const clearAll = () =>
-    setFilters({ bedrooms: "Any", min_area: "", max_area: "" });
+    setFilters({ bedrooms: "Any", min_area: "", max_area: "", min_price: "", max_price: "" });
 
   const hasActive =
-    filters.bedrooms !== "Any" || filters.min_area || filters.max_area;
+    filters.bedrooms !== "Any" || filters.min_area || filters.max_area || filters.min_price || filters.max_price;
 
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 bg-white border-b border-gray-100 flex-wrap">
@@ -54,6 +54,29 @@ export default function FilterBar({ filters, setFilters }) {
           value={filters.max_area || ""}
           onChange={(e) => update("max_area", e.target.value)}
           className="w-16 border border-gray-200 rounded-md px-2 py-1 text-xs text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-900"
+        />
+      </div>
+
+      {/* Divider */}
+      <div className="h-4 w-px bg-gray-200" />
+
+      {/* Price range */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Price (PKR)</span>
+        <input
+          type="number"
+          placeholder="Min"
+          value={filters.min_price || ""}
+          onChange={(e) => update("min_price", e.target.value)}
+          className="w-20 border border-gray-200 rounded-md px-2 py-1 text-xs text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-900"
+        />
+        <span className="text-xs text-gray-300">—</span>
+        <input
+          type="number"
+          placeholder="Max"
+          value={filters.max_price || ""}
+          onChange={(e) => update("max_price", e.target.value)}
+          className="w-20 border border-gray-200 rounded-md px-2 py-1 text-xs text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-900"
         />
       </div>
 

@@ -8,8 +8,12 @@ const api = axios.create({
 })
 
 export const propertyService = {
-  getByCategory: async (category) => {
-    const response = await api.get(`/properties/?category=${category}`)
+  getByCategory: async (category, filters = {}) => {
+    const params = { category }
+    if (filters.minPrice != null) params.min_price = filters.minPrice
+    if (filters.maxPrice != null) params.max_price = filters.maxPrice
+
+    const response = await api.get('/properties/', { params })
     return response.data.results
   },
 
