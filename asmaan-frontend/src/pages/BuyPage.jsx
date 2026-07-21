@@ -1,10 +1,24 @@
+import { useState, useMemo } from 'react'
 import Navbar from '../components/common/Navbar'
 import SatelliteMap from '../components/map/SatelliteMap'
 import PropertyGrid from '../components/listings/PropertyGrid'
+import ViewToggle from '../components/ui/ViewToggle'
+import FilterBar from '../components/ui/FilterBar'
 import { useProperties } from '../hooks/useProperties'
 
 export default function BuyPage() {
   const { properties, loading, error } = useProperties('buy')
+  const [view, setView] = useState('grid')
+  const [filters, setFilters] = useState({ bedrooms: 'Any', min_area: '', max_area: '' })
+
+  const filtered = useMemo(() => {
+    return properties.filter((p) => {
+      if (filters.bedrooms !== 'Any' && String(p.bedrooms) !== filters.bedrooms) return false
+      if (filters.min_area && p.area_sqft < Number(filters.min_area)) return false
+      if (filters.max_area && p.area_sqft > Number(filters.max_area)) return false
+      return true
+    })
+  }, [properties, filters])
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -16,18 +30,43 @@ export default function BuyPage() {
           overflowY: 'auto',
           background: '#f9fafb',
           borderRight: '1px solid #e5e7eb',
+          display: 'flex',
+          flexDirection: 'column',
         }}>
-          <div style={{ padding: '12px', borderBottom: '1px solid #e5e7eb', background: 'white' }}>
-            <p style={{ margin: 0, fontWeight: '600' }}>
-              {loading ? 'Loading...' : `${properties.length} properties for sale`}
+          {/* Header row */}
+          <div style={{
+            padding: '10px 12px',
+            borderBottom: '1px solid #e5e7eb',
+            background: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+          }}>
+            <p style={{ margin: 0, fontWeight: '600', fontSize: '14px' }}>
+              {loading ? 'Loading...' : `${filtered.length} properties for sale`}
             </p>
+            <ViewToggle view={view} setView={setView} />
           </div>
-          <PropertyGrid properties={properties} loading={loading} error={error} />
+
+          {/* Filter bar */}
+          <FilterBar filters={filters} setFilters={setFilters} />
+
+          {/* Grid — only shown in grid view */}
+          {view === 'grid' && (
+            <PropertyGrid properties={filtered} loading={loading} error={error} />
+          )}
         </div>
 
-        <div style={{ flex: 1, position: 'relative' }}>
-          <SatelliteMap properties={properties} />
+        {/* Map — always mounted, hidden in grid view to avoid remount */}
+        <div style={{ flex: 1, position: 'relative', display: view === 'map' ? 'block' : 'none' }}>
+          <SatelliteMap properties={filtered} />
         </div>
+
+        {/* Full-width map when map view active on left panel */}
+        {view === 'map' && (
+          <style>{`.left-panel { display: none !important; }`}</style>
+        )}
       </div>
     </div>
   )
