@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import BuyPage from './pages/BuyPage'
 import RentPage from './pages/RentPage'
 import PlotsPage from './pages/PlotsPage'
-import SellPage from './pages/SellPage'
 
 function App() {
   return (
@@ -12,7 +11,6 @@ function App() {
         <Route path="/buy" element={<BuyPage />} />
         <Route path="/rent" element={<RentPage />} />
         <Route path="/plots" element={<PlotsPage />} />
-        <Route path="/sell" element={<SellPage />} />
       </Routes>
     </BrowserRouter>
   )
