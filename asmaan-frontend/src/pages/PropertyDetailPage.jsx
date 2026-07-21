@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/common/Navbar'
 import PropertyDetailCard from '../components/property/PropertyDetailCard'
+import PriceHistoryChart from '../components/listings/PriceHistoryChart'
+import SatelliteMap from '../components/map/SatelliteMap'
 import { getPropertyById } from '../services/api'
 
 export default function PropertyDetailPage() {
@@ -110,6 +112,31 @@ export default function PropertyDetailPage() {
 
             {/* Detail card */}
             <PropertyDetailCard property={property} />
+
+            {/* Location */}
+            {property.latitude && property.longitude && (
+              <div className="bg-white rounded-xl shadow-sm p-6 mt-4">
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
+                  Location
+                </p>
+                <div className="rounded-lg overflow-hidden">
+                  <SatelliteMap
+                    properties={[property]}
+                    center={[Number(property.longitude), Number(property.latitude)]}
+                    zoom={15}
+                    height="240px"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Price history */}
+            <div className="bg-white rounded-xl shadow-sm p-6 mt-4">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
+                Price History
+              </p>
+              <PriceHistoryChart history={property.price_history} />
+            </div>
           </>
         )}
 
