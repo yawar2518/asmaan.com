@@ -24,9 +24,11 @@ class PropertySerializer(serializers.ModelSerializer):
         model = Property
         fields = [
             'id', 'title', 'category', 'status', 'price',
-            'size', 'bedrooms', 'bathrooms', 'floors',
+            'size', 'area_sqft', 'bedrooms', 'bathrooms', 'floors', 'floor',
+            'furnishing', 'property_age',
             'area', 'city', 'address',
             'latitude', 'longitude',
+            'contact_name', 'contact_phone',
             'is_verified', 'description', 'images', 'price_history',
             'created_at',
         ]

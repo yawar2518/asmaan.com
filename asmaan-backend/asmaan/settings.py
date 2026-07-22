@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
+
+from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,12 +35,12 @@ os.environ['PROJ_LIB'] = os.path.join(OSGEO_PATH, 'data', 'proj')
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#)ns&xi8iak20@v1=8u2sy78&7*qao-q3jq(#)!32jwce4*&4j'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-#)ns&xi8iak20@v1=8u2sy78&7*qao-q3jq(#)!32jwce4*&4j')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -53,6 +56,8 @@ INSTALLED_APPS = [
     # Third-party
     'rest_framework',
     'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
     # Local apps
     'apps.properties',
     'apps.listings',
@@ -92,8 +97,6 @@ WSGI_APPLICATION = 'asmaan.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-from decouple import config
 
 DATABASES = {
     'default': {
@@ -150,13 +153,76 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # CORS — allow React dev server
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-]
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://127.0.0.1:5173',
+    cast=Csv(),
+)
 
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+}
+
+# Cloudinary — used for agent-uploaded listing photos and property images.
+# Falls back to local filesystem storage automatically when no real
+# credentials are configured, so the app works out of the box in dev/demo
+# without requiring a Cloudinary account (Sprint 2 risk #1 mitigation).
+CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
+CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY', default='')
+CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET', default='')
+
+_cloudinary_configured = bool(
+    CLOUDINARY_CLOUD_NAME
+    and CLOUDINARY_API_KEY
+    and not CLOUDINARY_CLOUD_NAME.startswith('your-')
+)
+
+if _cloudinary_configured:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
+        'API_KEY': CLOUDINARY_API_KEY,
+        'API_SECRET': CLOUDINARY_API_SECRET,
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
+# Email — falls back to the console backend (prints emails to the terminal)
+# when no real SMTP credentials are configured (Sprint 2 risk #3 mitigation).
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD and not EMAIL_HOST_USER.startswith('your-'):
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+    EMAIL_USE_TLS = True
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Asmaan.com <noreply@asmaan.com>')
+
+# Used to build absolute links (e.g. seller tracking link) inside email bodies.
+FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
+
+# Used to turn locally-stored media paths (e.g. /media/listing_photos/x.jpg)
+# into absolute URLs the frontend (running on a different origin/port) can
+# actually load. Not needed once Cloudinary is configured, since Cloudinary
+# URLs are already absolute.
+BACKEND_BASE_URL = config('BACKEND_BASE_URL', default='http://127.0.0.1:8000')

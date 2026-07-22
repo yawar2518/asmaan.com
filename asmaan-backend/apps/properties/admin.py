@@ -40,10 +40,13 @@ class PropertyAdmin(admin.GISModelAdmin):
             'fields': ('price',)
         }),
         ('Property Details', {
-            'fields': ('size', 'bedrooms', 'bathrooms', 'floors')
+            'fields': ('size', 'area_sqft', 'bedrooms', 'bathrooms', 'floors', 'floor', 'furnishing', 'property_age')
         }),
         ('Location', {
             'fields': ('area', 'city', 'address', 'location')
+        }),
+        ('Contact', {
+            'fields': ('contact_name', 'contact_phone')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
