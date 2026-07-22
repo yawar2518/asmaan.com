@@ -1,30 +1,19 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import Navbar from '../components/common/Navbar'
 import SatelliteMap from '../components/map/SatelliteMap'
 import PropertyGrid from '../components/listings/PropertyGrid'
 import ViewToggle from '../components/ui/ViewToggle'
-import FilterBar from '../components/ui/FilterBar'
+import FilterBar, { DEFAULT_FILTERS } from '../components/ui/FilterBar'
 import { useProperties } from '../hooks/useProperties'
 
 export default function PlotsPage() {
-  const { properties, loading, error } = useProperties('plot')
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const { properties, loading, error } = useProperties('plot', filters)
   const [view, setViewState] = useState(() => sessionStorage.getItem('asmaan_view_plot') || 'grid')
   const setView = (v) => {
     setViewState(v)
     sessionStorage.setItem('asmaan_view_plot', v)
   }
-  const [filters, setFilters] = useState({ bedrooms: 'Any', min_area: '', max_area: '', min_price: '', max_price: '' })
-
-  const filtered = useMemo(() => {
-    return properties.filter((p) => {
-      if (filters.bedrooms !== 'Any' && String(p.bedrooms) !== filters.bedrooms) return false
-      if (filters.min_area && p.area_sqft < Number(filters.min_area)) return false
-      if (filters.max_area && p.area_sqft > Number(filters.max_area)) return false
-      if (filters.min_price && Number(p.price) < Number(filters.min_price)) return false
-      if (filters.max_price && Number(p.price) > Number(filters.max_price)) return false
-      return true
-    })
-  }, [properties, filters])
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -49,7 +38,7 @@ export default function PlotsPage() {
             gap: '8px',
           }}>
             <p style={{ margin: 0, fontWeight: '600', fontSize: '14px' }}>
-              {loading ? 'Loading...' : `${filtered.length} plots`}
+              {loading ? 'Loading...' : `${properties.length} plots`}
             </p>
             <ViewToggle view={view} setView={setView} />
           </div>
@@ -57,12 +46,12 @@ export default function PlotsPage() {
           <FilterBar filters={filters} setFilters={setFilters} />
 
           {view === 'grid' && (
-            <PropertyGrid properties={filtered} loading={loading} error={error} />
+            <PropertyGrid properties={properties} loading={loading} error={error} />
           )}
         </div>
 
         <div style={{ flex: 1, position: 'relative', display: view === 'map' ? 'block' : 'none' }}>
-          <SatelliteMap properties={filtered} />
+          <SatelliteMap properties={properties} />
         </div>
       </div>
     </div>

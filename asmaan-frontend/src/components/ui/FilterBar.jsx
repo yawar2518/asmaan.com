@@ -1,14 +1,19 @@
 const BEDROOM_OPTIONS = ["Any", "1", "2", "3", "4", "5+"];
+const ZONE_OPTIONS = ["Any", "Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad"];
+
+export const DEFAULT_FILTERS = {
+  bedrooms: "Any", min_area: "", max_area: "", min_price: "", max_price: "", city: "Any", zone: "",
+};
 
 export default function FilterBar({ filters, setFilters }) {
   const update = (field, value) =>
     setFilters((prev) => ({ ...prev, [field]: value }));
 
-  const clearAll = () =>
-    setFilters({ bedrooms: "Any", min_area: "", max_area: "", min_price: "", max_price: "" });
+  const clearAll = () => setFilters(DEFAULT_FILTERS);
 
   const hasActive =
-    filters.bedrooms !== "Any" || filters.min_area || filters.max_area || filters.min_price || filters.max_price;
+    filters.bedrooms !== "Any" || filters.min_area || filters.max_area ||
+    filters.min_price || filters.max_price || (filters.city && filters.city !== "Any") || filters.zone;
 
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 bg-white border-b border-gray-100 flex-wrap">
@@ -32,6 +37,33 @@ export default function FilterBar({ filters, setFilters }) {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Divider */}
+      <div className="h-4 w-px bg-gray-200" />
+
+      {/* City */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-gray-400 font-medium whitespace-nowrap">City</span>
+        <select
+          value={filters.city || "Any"}
+          onChange={(e) => update("city", e.target.value)}
+          className="border border-gray-200 rounded-md px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white"
+        >
+          {ZONE_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </div>
+
+      {/* Zone / area free text */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Zone</span>
+        <input
+          type="text"
+          placeholder="e.g. DHA"
+          value={filters.zone || ""}
+          onChange={(e) => update("zone", e.target.value)}
+          className="w-20 border border-gray-200 rounded-md px-2 py-1 text-xs text-gray-900 placeholder-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-900"
+        />
       </div>
 
       {/* Divider */}

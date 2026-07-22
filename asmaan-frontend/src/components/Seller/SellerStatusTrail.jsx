@@ -1,6 +1,6 @@
 const STAGES = [
   {
-    key: "submitted",
+    key: "pending",
     label: "Submitted",
     description: "Your listing request has been received.",
   },
@@ -15,13 +15,13 @@ const STAGES = [
     description: "The agent will visit the property for physical verification.",
   },
   {
-    key: "verification_complete",
-    label: "Verification complete",
+    key: "visit_completed",
+    label: "Visit completed",
     description: "Property has been inspected and photos collected.",
   },
   {
-    key: "admin_review",
-    label: "Admin review",
+    key: "under_review",
+    label: "Under admin review",
     description: "Your listing is being reviewed before going live.",
   },
   {
@@ -36,7 +36,26 @@ const STATUS_INDEX = STAGES.reduce((acc, s, i) => {
   return acc;
 }, {});
 
-export default function SellerStatusTrail({ currentStatus = "submitted" }) {
+export default function SellerStatusTrail({ currentStatus = "pending", adminNotes = "" }) {
+  if (currentStatus === "rejected") {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-8 max-w-md mx-auto">
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">Listing status</h2>
+        <div className="mt-6 flex gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
+          <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <div>
+            <p className="text-sm font-semibold text-red-700 mb-1">Listing not approved</p>
+            <p className="text-xs text-red-600 leading-relaxed">
+              {adminNotes || "This listing did not pass verification."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const currentIndex = STATUS_INDEX[currentStatus] ?? 0;
 
   return (

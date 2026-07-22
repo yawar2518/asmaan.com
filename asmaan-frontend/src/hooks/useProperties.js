@@ -5,7 +5,7 @@ export function useProperties(category, filters = {}) {
   const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const { minPrice, maxPrice } = filters
+  const { min_price, max_price, bedrooms, min_area, max_area, city, zone } = filters
 
   useEffect(() => {
     let cancelled = false
@@ -13,7 +13,9 @@ export function useProperties(category, filters = {}) {
     async function fetchProperties() {
       try {
         setLoading(true)
-        const data = await propertyService.getByCategory(category, { minPrice, maxPrice })
+        const data = await propertyService.getByCategory(category, {
+          min_price, max_price, bedrooms, min_area, max_area, city, zone,
+        })
         if (!cancelled) {
           setProperties(data)
           setError(null)
@@ -30,7 +32,7 @@ export function useProperties(category, filters = {}) {
 
     fetchProperties()
     return () => { cancelled = true }
-  }, [category, minPrice, maxPrice])
+  }, [category, min_price, max_price, bedrooms, min_area, max_area, city, zone])
 
   return { properties, loading, error }
 }

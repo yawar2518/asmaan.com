@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Step5ImageUpload({ formData, setFormData, onNext, onBack }) {
+export default function Step7ImageUpload({ formData, setFormData, onNext, onBack }) {
   const [previews, setPreviews] = useState(formData.image_previews || []);
   const [error, setError] = useState("");
 
@@ -14,6 +14,7 @@ export default function Step5ImageUpload({ formData, setFormData, onNext, onBack
     const newPreviews = files.map((file) => ({
       url: URL.createObjectURL(file),
       name: file.name,
+      file,
     }));
     const updated = [...previews, ...newPreviews];
     setPreviews(updated);
@@ -28,9 +29,10 @@ export default function Step5ImageUpload({ formData, setFormData, onNext, onBack
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-8 max-w-xl mx-auto">
-      <p className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1">Step 5 of 6</p>
-      <h2 className="text-xl font-semibold text-gray-900 mb-1">Property photos</h2>
-      <p className="text-sm text-gray-400 mb-6">Add up to 10 photos. First photo will be the cover.</p>
+      <p className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1">Step 7 of 8</p>
+      <h2 className="text-xl font-semibold text-gray-900 mb-1">Reference photos</h2>
+      <p className="text-sm text-gray-400 mb-1">Optional — add up to 10 photos for our agent's reference.</p>
+      <p className="text-sm text-gray-400 mb-6">Your listing will use verified photos taken during the agent's visit.</p>
 
       {/* Drop zone */}
       <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-400 transition-colors bg-gray-50">

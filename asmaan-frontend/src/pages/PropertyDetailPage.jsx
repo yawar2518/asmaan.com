@@ -78,7 +78,7 @@ export default function PropertyDetailPage() {
                 {/* Main image */}
                 <div className="w-full h-56 rounded-xl overflow-hidden mb-2">
                   <img
-                    src={property.images[0].image}
+                    src={property.images[0].image_url}
                     alt={property.title}
                     className="w-full h-full object-cover"
                   />
@@ -89,7 +89,7 @@ export default function PropertyDetailPage() {
                     {property.images.slice(1).map((img, i) => (
                       <div key={i} className="shrink-0 w-20 h-16 rounded-lg overflow-hidden">
                         <img
-                          src={img.image}
+                          src={img.image_url}
                           alt=""
                           className="w-full h-full object-cover"
                         />

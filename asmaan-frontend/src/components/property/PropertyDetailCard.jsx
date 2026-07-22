@@ -5,18 +5,27 @@ export default function PropertyDetailCard({ property }) {
     title,
     price,
     category,
+    status: availabilityStatus,
     area_sqft,
     bedrooms,
     bathrooms,
     floor,
     furnishing,
+    property_age,
     description,
     is_verified,
-    area_name,
+    area: area_name,
     city,
     contact_name,
     contact_phone,
   } = property;
+
+  const STATUS_LABELS = { available: 'Available', sold: 'Sold', rented: 'Rented' };
+  const STATUS_STYLES = {
+    available: 'border-green-200 bg-green-50 text-green-700',
+    sold: 'border-red-200 bg-red-50 text-red-700',
+    rented: 'border-amber-200 bg-amber-50 text-amber-700',
+  };
 
   const whatsappLink = contact_phone
     ? `https://wa.me/92${contact_phone}?text=Hi, I saw your property listing on Asmaan.com — ${title}`
@@ -59,8 +68,8 @@ export default function PropertyDetailCard({ property }) {
         </div>
 
         {/* Availability badge */}
-        <span className="text-xs font-medium px-3 py-1.5 rounded-full border border-green-200 bg-green-50 text-green-700">
-          Available
+        <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${STATUS_STYLES[availabilityStatus] || STATUS_STYLES.available}`}>
+          {STATUS_LABELS[availabilityStatus] || "Available"}
         </span>
       </div>
 
@@ -71,7 +80,13 @@ export default function PropertyDetailCard({ property }) {
           { label: "Bedrooms", value: bedrooms ?? null },
           { label: "Bathrooms", value: bathrooms ?? null },
           { label: "Floor", value: floor || null },
-          { label: "Furnishing", value: furnishing || null },
+          { label: "Age", value: property_age != null ? `${property_age} yrs` : null },
+          {
+            label: "Furnishing",
+            value: furnishing
+              ? { unfurnished: "Unfurnished", semi_furnished: "Semi-Furnished", fully_furnished: "Fully Furnished" }[furnishing] || furnishing
+              : null,
+          },
           { label: "Type", value: categoryLabel },
         ]
           .filter((s) => s.value !== null && s.value !== undefined)

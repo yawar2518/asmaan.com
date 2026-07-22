@@ -1,22 +1,17 @@
 const PRICE_TYPES = ["Fixed", "Negotiable"];
 
-export default function Step4PricingContact({ formData, setFormData, onNext, onBack }) {
+export default function Step5ListingDetails({ formData, setFormData, onNext, onBack }) {
   const update = (field, value) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-  const isValid =
-    formData.price > 0 &&
-    formData.contact_name?.trim() &&
-    formData.contact_phone?.trim();
+  const isValid = formData.price > 0;
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-8 max-w-xl mx-auto">
-      <p className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1">Step 4 of 6</p>
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Pricing & contact</h2>
+      <p className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1">Step 5 of 8</p>
+      <h2 className="text-xl font-semibold text-gray-900 mb-6">Listing details</h2>
 
       <div className="space-y-5">
-
-        {/* Price */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Asking price <span className="text-gray-400 font-normal">(PKR)</span>
@@ -29,7 +24,6 @@ export default function Step4PricingContact({ formData, setFormData, onNext, onB
           />
         </div>
 
-        {/* Price type toggle */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Price type</label>
           <div className="flex gap-3">
@@ -46,38 +40,18 @@ export default function Step4PricingContact({ formData, setFormData, onNext, onB
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-gray-100 pt-1" />
-
-        {/* Contact name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Your name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Available from <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
           <input
-            type="text" placeholder="e.g. Ahmed Khan"
-            value={formData.contact_name || ""}
-            onChange={(e) => update("contact_name", e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
+            type="date"
+            value={formData.available_from || ""}
+            onChange={(e) => update("available_from", e.target.value)}
+            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
           />
         </div>
 
-        {/* Phone */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp number</label>
-          <div className="flex">
-            <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-sm text-gray-500">
-              +92
-            </span>
-            <input
-              type="tel" placeholder="3001234567"
-              value={formData.contact_phone || ""}
-              onChange={(e) => update("contact_phone", e.target.value)}
-              className="flex-1 border border-gray-200 rounded-r-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900"
-            />
-          </div>
-          <p className="text-xs text-gray-400 mt-1">Buyers will contact you on this number</p>
-        </div>
-
-        {/* Description */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Description <span className="text-gray-400 font-normal">(optional)</span>
@@ -89,7 +63,6 @@ export default function Step4PricingContact({ formData, setFormData, onNext, onB
             className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
           />
         </div>
-
       </div>
 
       <div className="flex gap-3 mt-8">
