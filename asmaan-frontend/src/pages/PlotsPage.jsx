@@ -1,10 +1,19 @@
+import { useState } from 'react'
 import Navbar from '../components/common/Navbar'
 import SatelliteMap from '../components/map/SatelliteMap'
 import PropertyGrid from '../components/listings/PropertyGrid'
+import ViewToggle from '../components/ui/ViewToggle'
+import FilterBar, { DEFAULT_FILTERS } from '../components/ui/FilterBar'
 import { useProperties } from '../hooks/useProperties'
 
-export default function BuyPage() {
-  const { properties, loading, error } = useProperties('plot')
+export default function PlotsPage() {
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const { properties, loading, error } = useProperties('plot', filters)
+  const [view, setViewState] = useState(() => sessionStorage.getItem('asmaan_view_plot') || 'grid')
+  const setView = (v) => {
+    setViewState(v)
+    sessionStorage.setItem('asmaan_view_plot', v)
+  }
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -16,16 +25,32 @@ export default function BuyPage() {
           overflowY: 'auto',
           background: '#f9fafb',
           borderRight: '1px solid #e5e7eb',
+          display: 'flex',
+          flexDirection: 'column',
         }}>
-          <div style={{ padding: '12px', borderBottom: '1px solid #e5e7eb', background: 'white' }}>
-            <p style={{ margin: 0, fontWeight: '600' }}>
-              {loading ? 'Loading...' : `${properties.length} properties for sale`}
+          <div style={{
+            padding: '10px 12px',
+            borderBottom: '1px solid #e5e7eb',
+            background: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+          }}>
+            <p style={{ margin: 0, fontWeight: '600', fontSize: '14px' }}>
+              {loading ? 'Loading...' : `${properties.length} plots`}
             </p>
+            <ViewToggle view={view} setView={setView} />
           </div>
-          <PropertyGrid properties={properties} loading={loading} error={error} />
+
+          <FilterBar filters={filters} setFilters={setFilters} />
+
+          {view === 'grid' && (
+            <PropertyGrid properties={properties} loading={loading} error={error} />
+          )}
         </div>
 
-        <div style={{ flex: 1, position: 'relative' }}>
+        <div style={{ flex: 1, position: 'relative', display: view === 'map' ? 'block' : 'none' }}>
           <SatelliteMap properties={properties} />
         </div>
       </div>
